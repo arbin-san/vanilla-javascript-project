@@ -1,42 +1,41 @@
 // Variables
-let taskList = document.querySelector('#task-list');
+let todoList = document.querySelector('#todo-list');
+let todoForm = document.querySelector('#todo-form');
+let newTodoInput = document.querySelector('#newTodo');
 
-// EventListener
-window.addEventListener('DOMContentLoaded', function() {
+// Event Listeners
+document.addEventListener('DOMContentLoaded', loadTodos);
+todoForm.addEventListener('submit', addNewtodo);
+todoList.addEventListener('click', removeTodoItem);
 
-});
-
-document.getElementById('addTask').addEventListener('click', function() {
-    addNewTask()
-});
-document.getElementById('task-list').addEventListener('click', function() {
-    markCompleted()
-});
-
-function addNewTask() {
-    const newTask = document.querySelector('#newTask').value;
-
-    if (localStorage.getItem('tasks')) {
-        localStorage.setItem('tasks', localStorage.getItem('tasks') + ','+ newTask);
-    } else {
-        localStorage.setItem('tasks', newTask);
+// handles adding of new todo from form.
+function addNewtodo(e) {
+    e.preventDefault();
+    const newTodo = newTodoInput.value;
+    if(newTodo) {
+        addToLocalStorage(newTodo)
     }
-    updateTaskList(newTask);
 }
 
-function generateTaskList(task) {
+// Add new todo into localStorage
+function addToLocalStorage(newTodo) {
+    let todos = getTodosFromLocalStorage();
+    todos.push(newTodo);
+    localStorage.setItem('todos', JSON.stringify(todos));
+    
+    // Create new todo element
     let li = document.createElement('li');
-    li.innerText = task;
-    taskList.append(li);
+    li.textContent = newTodo;
+    
+    // Add a button to close the todo
+    let xBtn = document.createElement('button');
+    xBtn.textContent = 'X'
+    li.appendChild(xBtn);
+    todoList.appendChild(li);
 }
 
-function markCompleted() {
-    console.log('clicked', document.querySelectorAll('li'));
-    // let allTasks = localStorage.getItem('tasks').split(',');
-    // allTasks.delete(completed);
-}
-
-function getTasksFromLocalStorage() {  
+// Load todos from localStorage
+function getTodosFromLocalStorage() {  
     let items = localStorage.getItem('todos');  
     if (items === null) {
         items = [];
@@ -46,13 +45,35 @@ function getTasksFromLocalStorage() {
     return items;
 }
 
+function removeTodoItem(e) {
+   let todo = e.target.parentElement;
+   removeFromLocalStorage(todo);
+   todo.remove();
 
-function loadTasks() {
-    const allTasks = getTasksFromLocalStorage();
-    if (allTasks) {
-        allTasks.forEach((task) => {
-            generateTaskList(task);
+}
+
+function removeFromLocalStorage(todo) {
+    let item = todo.firstChild.textContent;
+    let todosArr = getTodosFromLocalStorage();
+    todosArr.forEach((todo,index) => {
+        if(todo === item) {
+            todosArr.splice(index,1);
+            localStorage.setItem('todos', JSON.stringify(todosArr));
+        }
+    })
+}
+
+// Load todos from localStorage for the first time
+function loadTodos() {
+    let todos = getTodosFromLocalStorage();
+    if (todos) {
+        todos.forEach((todo) => {
+            let li = document.createElement('li');
+            li.textContent = todo;
+            let xBtn = document.createElement('button');
+            xBtn.textContent = 'X'
+            li.appendChild(xBtn);
+            todoList.appendChild(li);
         })
     }
 }
-startApp();
