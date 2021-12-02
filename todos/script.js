@@ -1,12 +1,14 @@
 // Variables
-let todoList = document.querySelector('#todo-list');
-let todoForm = document.querySelector('#todo-form');
-let newTodoInput = document.querySelector('#newTodo');
+let todoList = document.querySelector('#todo-list'),
+    todoForm = document.querySelector('#todo-form'),
+    newTodoInput = document.querySelector('#newTodo'),
+    todoSearch = document.querySelector('#todo-search');
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', loadTodos);
 todoForm.addEventListener('submit', addNewtodo);
 todoList.addEventListener('click', removeTodoItem);
+todoSearch.addEventListener('keyup', searchTodo);
 
 // handles adding of new todo from form.
 function addNewtodo(e) {
@@ -61,6 +63,19 @@ function removeFromLocalStorage(todo) {
             localStorage.setItem('todos', JSON.stringify(todosArr));
         }
     })
+}
+
+function searchTodo() {
+    let q = todoSearch.value.toLowerCase();
+    let todoItems = todoList.getElementsByTagName('li');
+    for(i=0; i< todoItems.length; i++) {
+        let val = todoItems[i].textContent.toLowerCase();
+        if (val.indexOf(q) != -1) {
+            todoItems[i].style.display = 'block';
+        } else {
+            todoItems[i].style.display = 'none';
+        }
+    }
 }
 
 // Load todos from localStorage for the first time
