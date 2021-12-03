@@ -14,7 +14,7 @@ todoSearch.addEventListener('keyup', searchTodo);
 function addNewtodo(e) {
     e.preventDefault();
     const newTodo = newTodoInput.value;
-    if(newTodo) {
+    if (newTodo) {
         addToLocalStorage(newTodo)
     }
 }
@@ -24,21 +24,24 @@ function addToLocalStorage(newTodo) {
     let todos = getTodosFromLocalStorage();
     todos.push(newTodo);
     localStorage.setItem('todos', JSON.stringify(todos));
-    
+
     // Create new todo element
     let li = document.createElement('li');
+    li.className = 'list-group-item';
     li.textContent = newTodo;
-    
+
     // Add a button to close the todo
     let xBtn = document.createElement('button');
-    xBtn.textContent = 'X'
+    xBtn.className = 'btn btn-success btn-sm float-end';
+    xBtn.innerHTML = '&check;'
+
     li.appendChild(xBtn);
     todoList.appendChild(li);
 }
 
 // Load todos from localStorage
-function getTodosFromLocalStorage() {  
-    let items = localStorage.getItem('todos');  
+function getTodosFromLocalStorage() {
+    let items = localStorage.getItem('todos');
     if (items === null) {
         items = [];
     } else {
@@ -48,18 +51,20 @@ function getTodosFromLocalStorage() {
 }
 
 function removeTodoItem(e) {
-   let todo = e.target.parentElement;
-   removeFromLocalStorage(todo);
-   todo.remove();
+    if (e.target.classList.contains('btn')) {
+        let todo = e.target.parentElement;
+        removeFromLocalStorage(todo);
+        todo.remove();
+    }
 
 }
 
 function removeFromLocalStorage(todo) {
     let item = todo.firstChild.textContent;
     let todosArr = getTodosFromLocalStorage();
-    todosArr.forEach((todo,index) => {
-        if(todo === item) {
-            todosArr.splice(index,1);
+    todosArr.forEach((todo, index) => {
+        if (todo === item) {
+            todosArr.splice(index, 1);
             localStorage.setItem('todos', JSON.stringify(todosArr));
         }
     })
@@ -68,7 +73,7 @@ function removeFromLocalStorage(todo) {
 function searchTodo() {
     let q = todoSearch.value.toLowerCase();
     let todoItems = todoList.getElementsByTagName('li');
-    for(i=0; i< todoItems.length; i++) {
+    for (i = 0; i < todoItems.length; i++) {
         let val = todoItems[i].textContent.toLowerCase();
         if (val.indexOf(q) != -1) {
             todoItems[i].style.display = 'block';
@@ -84,9 +89,11 @@ function loadTodos() {
     if (todos) {
         todos.forEach((todo) => {
             let li = document.createElement('li');
+            li.className = 'list-group-item';
             li.textContent = todo;
             let xBtn = document.createElement('button');
-            xBtn.textContent = 'X'
+            xBtn.className = 'btn btn-success btn-sm float-end';
+            xBtn.innerHTML = '&check;'
             li.appendChild(xBtn);
             todoList.appendChild(li);
         })
